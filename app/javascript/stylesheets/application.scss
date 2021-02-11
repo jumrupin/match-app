@@ -1,8 +1,8 @@
 @import '~bootstrap/scss/bootstrap';
 
-/* javascropt/sytlesheets/top.scssファイルの読み込み */
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+
 @import "top";
 
 @import "users/sign_up";
-
 @import "users/sign_in";
