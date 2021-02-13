@@ -17,6 +17,7 @@ require("channels")
 
 
 require("src/profile_image_upload");
+require("src/swipe")
 
 
 
