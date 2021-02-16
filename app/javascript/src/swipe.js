@@ -6,10 +6,9 @@ if(location.pathname == "/users") {
 
     function initCards() {
 
-      // この行を追加する
       let newCards = document.querySelectorAll('.swipe--card:not(.removed)');
 
-      // この行を編集する
+
       newCards.forEach(function (card, index) {
         card.style.zIndex = allCards.length - index;
         card.style.transform = 'scale(' + (20 - index) / 20 + ') translateY(-' + 30 * index + 'px)';
@@ -27,10 +26,9 @@ if(location.pathname == "/users") {
       let hammertime = new Hammer(el);
 
       hammertime.on('pan', function (event) {
-        // 中略
+
       });
 
-      // ==========ここから追加する==========
       hammertime.on('panend', function (event) {
         el.classList.remove('moving');
         swipeContainer.classList.remove('swipe_like');
@@ -40,6 +38,8 @@ if(location.pathname == "/users") {
 
         let keep = Math.abs(event.deltaX) < 200
         event.target.classList.toggle('removed', !keep);
+
+        let reaction = event.deltaX > 0 ? "like" : "dislike";
 
         if (keep) {
           event.target.style.transform = '';
@@ -52,14 +52,29 @@ if(location.pathname == "/users") {
           let yMulti = event.deltaY / 80;
           let rotate = xMulti * yMulti;
 
+          postReaction(el.id, reaction);
+
           event.target.style.transform = 'translate(' + toX + 'px, ' + (toY + event.deltaY) + 'px) rotate(' + rotate + 'deg)';
 
           initCards();
         }
       });
-      // ==========ここまで追加する==========
-
     });
+
+    function postReaction(user_id, reaction) {
+      $.ajax({
+        url: "reactions.json",
+        type: "POST",
+        datatype: "json",
+        data: {
+          user_id: user_id,
+          reaction: reaction,
+        }
+      })
+      .done(function() {
+        console.log("done!")
+      })
+    }
 
     function createButtonListener(reaction){
 
@@ -70,6 +85,11 @@ if(location.pathname == "/users") {
       let moveOutWidth = document.body.clientWidth * 2;
     
       let card = cards[0];
+
+      let user_id = card.id;
+
+      postReaction(user_id, reaction);
+
       card.classList.add('removed');
     
       if (reaction == "like") {
